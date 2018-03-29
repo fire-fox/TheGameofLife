@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<canvas id="myCanvas" width="800" height="800" style="border:1px solid #CECECE;">
+Your browser does not support the HTML5 canvas tag.</canvas>
+
+<script>
+//////////////////// INICIALIZANDO VARIABLES //////////////////////
+
+var size=100	//
+var pixel=8		//Width = Suze x Pixel
+var velocidad=20
+
+var c = document.getElementById("myCanvas");
+var ctx = c.getContext("2d");
+ctx.fillStyle = "rgb(255,255,255)";
+var bsize=size-1
+var vecinos=0
+var minx=0
+var miny=0
+var maxx=0
+var maxy=0
+var a = new Array(size);
+var b = new Array(size);
+
+//////////////////// LLAMANDO A FUNCIONES //////////////////////
+
+generarmatrices();
+setInterval(function(){
+	vivirmorir();
+	dibujar();
+	
+},velocidad);
+
+
+//////////////////// FUNCIONES //////////////////////
+
+function generarmatrices(){
+	for (i = 0; i <=bsize; i++) {
+	  a[i] = new Array(size);
+	  for (j = 0; j <=bsize; j++) {
+	    a[i][j] = Math.round(Math.random());
+	  }
+	}
+
+
+	for (i = 0; i <=bsize; i++) {
+	  b[i] = new Array(size);
+	}
+}
+
+function vivirmorir(){
+
+	for(i=0;i<=bsize;i++) {
+		for(j=0;j<=bsize;j++) {
+			if(i<1){
+				miny=0
+			}else{
+				miny=i-1
+			}
+			if(j<1){
+				minx=0
+			}else{
+				minx=j-1
+			}
+			if(i>=bsize){
+				maxy=bsize
+			}else{
+				maxy=i+1
+			}
+			if(j>=bsize){
+				maxx=bsize
+			}else{
+				maxx=j+1
+			}
+
+			//Contar vecinos vivos + 1
+			for(e=miny;e<=maxy;e++) {
+				for(p=minx;p<=maxx;p++) {
+					if(a[e][p]==1){
+						vecinos++
+					}
+					
+				}
+			}
+
+			//Si esta viva
+			if(a[i][j]==1){
+				if((vecinos<=4) && (vecinos>=3)){
+					b[i][j]=1
+				}
+				else{
+					b[i][j]=0
+				}
+
+			}
+			//Si no esta viva
+			if(a[i][j]==0){
+				if((vecinos==3)){
+					b[i][j]=1
+				}
+				else{
+					b[i][j]=0
+				}
+			}
+			vecinos=0
+		}
+
+	}
+
+}
+
+function dibujar(){
+	ctx.clearRect(0,0,c.width,c.height);
+
+	for(i=0;i<=bsize;i++) {
+		a[i] = b[i].slice();
+	}
+
+	for(y=0;y<=bsize;y++) {
+		for(x=0;x<=bsize;x++) {
+
+			if(a[y][x]==0){
+				ctx.fillStyle = 'rgb(255,255,255)';
+			} else {
+				ctx.fillStyle = 'rgb(0,0,0)';
+			}
+
+			ctx.fillRect(x*pixel, y*pixel, pixel, pixel);
+		}
+	}
+
+}
+
+</script>
+
+</body>
+</html>
